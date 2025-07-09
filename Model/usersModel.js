@@ -1,10 +1,10 @@
 const sequelize = require('../config/dbConfig.js');
 const {DataTypes} = require('sequelize');
 
+
 const User = sequelize.define('User',{
     user_id : {
         type : DataTypes.UUID,
-        defaultValue : DataTypes.UUIDV4,
         unique : true,
         allowNull : false,
         primaryKey : true
@@ -16,6 +16,10 @@ const User = sequelize.define('User',{
     },
     password : {
         type : DataTypes.STRING,
+        allowNull : false
+    },
+    not_revoked : {
+        type : DataTypes.BOOLEAN,
         allowNull : false
     }
 },{timestamps : true})
