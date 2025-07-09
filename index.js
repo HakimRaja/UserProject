@@ -4,7 +4,9 @@ const express = require('express');
 const db = require('./Model/modelsConfig.js');
 const userRouter = require('./Routes/userRoutes.js')
 const app = express();
-const verify = require('./Middlewares/authMiddleware.js')
+const verify = require('./Middlewares/authMiddleware.js');
+const adminRouter = require('./Routes/adminRoutes.js');
+// const { blackListedArray } = require('./Controllers/adminController.js');
 
 app.use(express.json());//middleware that parses the incomming req body into json
 
@@ -15,7 +17,8 @@ app.get('/',(req,res)=>{
 app.get('/api/check',verify,(req,res)=>{
     res.send(`Hello ggg, ${req.user.username}!!`);
 })
-
+app.use('/api/admin',adminRouter)
+// console.log(blackListedArray);
 db.sequelize.sync({alter:true})
 .then(()=>{
     app.listen(PORT,()=>{

@@ -1,6 +1,7 @@
 const sequelize = require('../config/dbConfig.js');
 const {hashPassword,comparePassword,generateToken} = require('../Services/userAuthServices.js')
-const {v4 : uuidv4} = require('uuid')
+const {v4 : uuidv4} = require('uuid');
+const blackListedArray  = require('../Services/getAllRevoked.js');
 
 const signUpUser = async(req,res)=>{
 try {
@@ -18,7 +19,7 @@ try {
     }
     const hashedPass = await hashPassword(password);
     const userId = uuidv4();
-    const [newUser] = await sequelize.query('INSERT INTO "Users"(user_id,username,password,"createdAt","updatedAt") VALUES(:user_id,:username, :password, NOW(), NOW()) RETURNING user_id',{
+    const [newUser] = await sequelize.query('INSERT INTO "Users"(user_id,username,password,not_revoked,"createdAt","updatedAt") VALUES(:user_id,:username, :password,TRUE, NOW(), NOW()) RETURNING user_id',{
         replacements : {user_id:userId,username , password : hashedPass},
         type : sequelize.QueryTypes.INSERT
     });//returns [rows , metadata]
@@ -42,8 +43,12 @@ try {
     if(!isMatch){
         return res.status(401).send({message : 'Invalid Password'})
     }
+    let arr = await blackListedArray();
+    if (arr.includes(username)) {
+        return res.status(400).send({message : 'You are not allowed the access the resources!'});
+    }
     const token = generateToken({user_id : user.user_id , username : user.username})
-    res.status(202).json(token);
+    res.status(202).json({token : token});
 } catch (error) {
     res.status(500).json({ error: error.message });
 }

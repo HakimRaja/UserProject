@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
+const  blackListedArray  = require('../Services/getAllRevoked');
 
-const verify = (req,res,next) =>{
+
+const verify =async (req,res,next) =>{
     const authHeader  = req.headers.authorization;
     // console.log(authHeader);
     if(!authHeader || !authHeader.startsWith('Bearer')){
@@ -11,6 +13,10 @@ const verify = (req,res,next) =>{
     // console.log(process.env.JWT_SECRET_KEY);
     try {
         const data = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        let arr = await blackListedArray();
+        if(arr.includes(data.username)){
+            return res.status(400).send({message : 'Your token has been revoked!'});
+        }
         req.user = data;
         next();
     } catch (error) {

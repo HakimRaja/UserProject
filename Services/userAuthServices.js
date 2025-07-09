@@ -10,7 +10,7 @@ const comparePassword = async (pass,hashedPass) =>{
 }
 
 const generateToken = (payload) =>{
-    return jwt.sign(payload,process.env.JWT_SECRET_KEY , {expiresIn : '3d'});
+    return jwt.sign(payload,process.env.JWT_SECRET_KEY , {expiresIn : '1h'});
 }
 
 module.exports = {hashPassword , comparePassword , generateToken};

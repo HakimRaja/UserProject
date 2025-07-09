@@ -17,6 +17,10 @@ const User = sequelize.define('User',{
     password : {
         type : DataTypes.STRING,
         allowNull : false
+    },
+    not_revoked : {
+        type : DataTypes.BOOLEAN,
+        allowNull : false
     }
 },{timestamps : true})
 
