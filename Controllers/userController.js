@@ -13,6 +13,9 @@ try {
     if (existingUser) {
         return res.status(400).send({message : 'username already exists'})
     }
+    if(password.length < 8){
+        return res.status(400).send({message :'Please set up a strong password.'})
+    }
     const hashedPass = await hashPassword(password);
     const userId = uuidv4();
     const [newUser] = await sequelize.query('INSERT INTO "Users"(user_id,username,password,"createdAt","updatedAt") VALUES(:user_id,:username, :password, NOW(), NOW()) RETURNING user_id',{
